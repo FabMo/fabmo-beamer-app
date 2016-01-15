@@ -1,0 +1,10 @@
+{
+  "name": "Beamer",
+  "main": "./index.html",
+  "icon": "icon.png",
+  "icon_color": "black",
+  "version": "0.0.1",
+  "author": "Bill Young",
+  "website": "http://www.shopbottools.com",
+  "description": "Cut a beam"
+}
