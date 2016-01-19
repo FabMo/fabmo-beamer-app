@@ -5,7 +5,7 @@ $( document ).ready(function() {
         console.log(err);
       } else {
 		  var xMax = data.machine.envelope.xmax.toString();
-		  var yMax = (data.machine.envelope.ymax - 1).toString();
+		  var yMax = data.machine.envelope.ymax.toString();
 		  $('#beam-width').attr('data-parsley-max', xMax);
 		  $('#hole-spacing').attr('data-parsley-max', yMax);
 		  
@@ -14,8 +14,8 @@ $( document ).ready(function() {
 });
 var hasTriangles = false;
 $('#hole-diameter').on('change', function(){
-         $('#beam-width').attr('data-parsley-min', $('#hole-diameter').val() * 3);
-		 $('#hole-diameter').attr('data-parsley-max', $('#beam-width').val / 3);
+         $('#beam-width').attr('data-parsley-min', parseFloat($('#hole-diameter').val()) * 3);
+		 $('#hole-diameter').attr('data-parsley-max', parseFloat($('#beam-width').val()) / 3);
 });
 
 $('#bit-diameter').on('change', function(){
