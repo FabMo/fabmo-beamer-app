@@ -1,16 +1,13 @@
 body {
 	font-family: sans-serif;
-	background-color: #eeeeee;
+	background-color:#E9E9E9;
 	color: #626366;
 }
 .title {
 	margin-left: 1em;
 	color: #101010;
 }
-.image-container {
-	margin: 3em;
-	margin-right: 4em;
-}
+
 
 .image-wrapper {
 	position: relative;
