@@ -1,15 +1,26 @@
 $( document ).ready(function() {
 	$('.advanced').hide();
-	
+	fabmoDashboard.getConfig(function(err, data) {
+      if(err) {
+        console.log(err);
+      } else {
+		  var xMax = data.machine.envelope.xmax.toString();
+		  var yMax = (data.machine.envelope.ymax - 1).toString();
+		  $('#beam-width').attr('data-parsley-max', xMax);
+		  $('#hole-spacing').attr('data-parsley-max', yMax);
+		  
+	  }
+	});  
 });
 var hasTriangles = false;
 $('#hole-diameter').on('change', function(){
          $('#beam-width').attr('data-parsley-min', $('#hole-diameter').val() * 3);
+		 $('#hole-diameter').attr('data-parsley-max', $('#beam-width').val / 3);
 });
 
 $('#bit-diameter').on('change', function(){
          var bitDiameter = $('#bit-diameter').val();
-         $('#hole-diameter').attr('data-parsley-max', bitDiameter);
+         $('#hole-diameter').attr('data-parsley-min', bitDiameter);
          });
 
 
