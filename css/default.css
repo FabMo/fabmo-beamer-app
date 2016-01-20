@@ -3,6 +3,11 @@ body {
 	background-color:#E9E9E9;
 	color: #626366;
 }
+
+.start-hidden {
+	display: none;
+}
+
 .title {
 	margin-left: 1em;
 	color: #101010;
@@ -70,20 +75,6 @@ body {
 		font-size: 1em;
 	}	
 }
-.center-bit{
-	background-color: #416cb5;
-	color: #eeeeee;
-	width: 87%;
-	margin-left: 6.5%;
-	margin-right: auto;
-	border: 1px solid #416cb5;
-	text-align: center;
-	margin-bottom: 1em;
-	border-radius: 5px;
-	line-height: 2em;
-	-moz-box-sizing: border-box;
- 		 box-sizing: border-box;
-}
 
 #submit {
 	width: 33%;
@@ -106,7 +97,6 @@ body {
 .content:children {
 	margin-bottom: 200px;
 }
-
 
 
 .modal {
@@ -170,11 +160,12 @@ body {
 	display: none;
 }
 
-.lock{
+.lock {
 	float:right;
 	width: 15px;
 	height: auto;
 	display: none;
+	cursor: pointer;
 }
 
 .unlock{
@@ -182,4 +173,5 @@ body {
 	width: 15px;
 	height: auto;
 	display: none;
+	cursor: pointer;
 }
