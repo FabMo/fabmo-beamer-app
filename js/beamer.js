@@ -38,8 +38,8 @@ $('form').parsley().on('field:success', function() {
     appConfig[id] = el.val();
 
     // Send the config back to the tool
-    console.info("Sending app config: " + JSON.stringify(config));
-    fabmoDashboard.setAppConfig(config);
+    console.info("Sending app config: " + JSON.stringify(appConfig));
+    fabmoDashboard.setAppConfig(appConfig);
 });
 
 $('#hole-diameter').on('change', function(){
