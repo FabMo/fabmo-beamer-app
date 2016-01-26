@@ -1,6 +1,11 @@
 var hasTriangles = false;
 
+// Object to store the App configuration that we'll read from fabmo
+var appConfig = {};
+
 $( document ).ready(function() {
+
+    // Get the machine configuration (global for the tool)
     fabmoDashboard.getConfig(function(err, data) {
       if(err) {
         console.log(err);
@@ -10,8 +15,32 @@ $( document ).ready(function() {
           $('#beam-width').attr('data-parsley-max', xMax);
           $('#hole-spacing').attr('data-parsley-max', yMax);
       }
-    });  
+    });
+
+    // Get the App configuration (specific to this app)
+    fabmoDashboard.getAppConfig(function(err, data) {
+        appConfig = data;
+        for(key in appConfig) {
+            console.info('Key "' + key + '" found in the app config with a value of ' + data[key]);
+            $('#' + key).val(appConfig[key])
+        }
+    });
 }); // document.ready
+
+$('form').parsley().on('field:success', function() {
+    // This event will fire whenever a field successfully validates.
+    // 'this' will be a ParsleyField instance
+
+    var el = this.$element;             // Get the jquery element from the ParsleyField instance
+    var id = el.attr('id');             // Get the id from the jquery element
+    
+    // Update the saved app config with the validated value we just retrieved
+    appConfig[id] = el.val();
+
+    // Send the config back to the tool
+    console.info("Sending app config: " + JSON.stringify(config));
+    fabmoDashboard.setAppConfig(config);
+});
 
 $('#hole-diameter').on('change', function(){
     $('#beam-width').attr('data-parsley-min', parseFloat($('#hole-diameter').val()) * 3);
@@ -70,7 +99,7 @@ $('.unlock').on('click', function (evt) {
 
 $('#submit').on('click', function (){
     $('.basic-setting').parsley().on('form:submit', function() {
-          
+        
         // start creating file 
         if ($('#check-triangle').prop('checked')) {
           hasTriangles = true;
