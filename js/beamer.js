@@ -24,6 +24,13 @@ $( document ).ready(function() {
             console.info('Key "' + key + '" found in the app config with a value of ' + data[key]);
             $('#' + key).val(appConfig[key])
         }
+
+        // For Bill:
+        appConfig.timesAppWasLoaded = appConfig.timesAppWasLoaded ||  0;
+        appConfig.timesAppWasLoaded++;
+        console.log("loaded")
+        fabmoDashboard.notify('info', 'App has been loaded ' + appConfig.timesAppWasLoaded + ' times.');
+        fabmoDashboard.setAppConfig(appConfig);
     });
 }); // document.ready
 
