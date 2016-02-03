@@ -6,7 +6,7 @@ var appConfig = {};
 $( document ).ready(function() {
 
     // Get the machine configuration (global for the tool)
-    fabmoDashboard.getConfig(function(err, data) {
+    fabmo.getConfig(function(err, data) {
       if(err) {
         console.log(err);
       } else {
@@ -18,7 +18,7 @@ $( document ).ready(function() {
     });
 
     // Get the App configuration (specific to this app)
-    fabmoDashboard.getAppConfig(function(err, data) {
+    fabmo.getAppConfig(function(err, data) {
         appConfig = data;
         for(key in appConfig) {
             console.info('Key "' + key + '" found in the app config with a value of ' + data[key]);
@@ -29,8 +29,8 @@ $( document ).ready(function() {
         appConfig.timesAppWasLoaded = appConfig.timesAppWasLoaded ||  0;
         appConfig.timesAppWasLoaded++;
         console.log("loaded")
-        fabmoDashboard.notify('info', 'App has been loaded ' + appConfig.timesAppWasLoaded + ' times.');
-        fabmoDashboard.setAppConfig(appConfig);
+        fabmo.notify('info', 'App has been loaded ' + appConfig.timesAppWasLoaded + ' times.');
+        fabmo.setAppConfig(appConfig);
     });
 }); // document.ready
 
@@ -46,7 +46,7 @@ $('form').parsley().on('field:success', function() {
 
     // Send the config back to the tool
     console.info("Sending app config: " + JSON.stringify(appConfig));
-    fabmoDashboard.setAppConfig(appConfig);
+    fabmo.setAppConfig(appConfig);
 });
 
 $('#hole-diameter').on('change', function(){
@@ -273,7 +273,8 @@ $('#submit').on('click', function (){
 		//ready to go 
         var beamerCode = shopbotCode.join('\n');
 
-        fabmoDashboard.submitJob(beamerCode, {
+        fabmo.submitJob({
+            file: beamerCode,
             filename : 'beamer-' + holeSpacing.toFixed(2) + 'x' + beamWidth.toFixed(2) + '.sbp',
             name : 'Beamer',
             description : 'Cut a beam with ' + holeDiameter + '" diameter holes that are ' + holeSpacing + '" apart' 
