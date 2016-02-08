@@ -56,8 +56,13 @@ $('#hole-diameter').on('change', function(){
     $('#beam-width').attr('data-parsley-min', parseFloat($('#hole-diameter').val()) * 3);
     $('#hole-diameter').attr('data-parsley-max', parseFloat($('#beam-width').val()) / 3);
 });
+
 $('#hole-spacing').on('change', function(){
-	$('#beam-Length').text('The overall length of your beam will be ' + ( parseFloat($('#hole-spacing').val()) + parseFloat(($('#beam-width').val()))))
+	
+	$('.modal-content p').html('The overall length of your beam will be ' + ( parseFloat($('#hole-spacing').val()) + parseFloat(($('#beam-width').val())))); 
+    	 $('.modal, .modal-container').fadeIn();
+      //$('.settings').hide();
+	
 });
 
 $('#bit-diameter').on('change', function(){
