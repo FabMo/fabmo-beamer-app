@@ -52,13 +52,14 @@
 				</div>
                 <div class="pure-control-group">
                   <label for="thickness">Material Thickness (in)</label>
-                  <input id="thickness" type="number" step="0.01" data-parsley-required="true" placeholder="Material Thickness" data-parsley-max="2" data-parsley-min="-2.0" value="0.25" data-parsley-trigger="change">
+                  <input id="thickness" type="number" step="0.01" data-parsley-required="true" placeholder="Material Thickness" data-parsley-max="2" data-parsley-min="-2.0" value="0.125" data-parsley-trigger="change">
                 </div>
                 <div class="pure-control-group">
                   <label for="bit-diameter">Bit Diameter (in)</label>
                   <select id="bit-diameter" data-parsley-required="true" placeholder="Bit Diameter" data-parsley-trigger="change">
-                          <option value = "0.0625"> 1/16"</option>
-                          <option value = "0.125" selected > 1/8"</option>
+                          <option value = "0.03125" selected> 1/32"</option>                          
+                          <option value = "0.0625" selected> 1/16"</option>
+                          <option value = "0.125"  > 1/8"</option>
                           <option value = "0.1875"> 3/16"</option>
                           <option value = "0.25"> 1/4"</option>
                          </select>
@@ -74,7 +75,7 @@
               <div class="advanced start-hidden">
                 <div class="pure-control-group">
                   <label for="feed-rate">Feed Rate (in/s)</label>
-                  <input class="lockable" id="feed-rate" type="number" step="0.25" data-parsley-required="true" placeholder="Feed Rate" data-parsley-max="6" data-parsley-min="0.01" value="2" disabled data-parsley-trigger="change">
+                  <input class="lockable" id="feed-rate" type="number" step="0.25" data-parsley-required="true" placeholder="Feed Rate" data-parsley-max="6" data-parsley-min="0.01" value="1" disabled data-parsley-trigger="change">
                 </div>
                 <div class="pure-control-group">
                   <label for="thru-cut">Thru Cut (in)</label>

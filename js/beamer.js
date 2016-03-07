@@ -171,7 +171,7 @@ $('#submit').on('click', function (){
                 "SO, 1,1",
                 "MS," + speed,
                 "pause 3",          
-                "J2, " + (startX + triangleXOffset).toFixed(3) + "," + centerY, 
+                "J2, " + (startX + triangleXOffset).toFixed(3) + "," + centerY.toFixed(3), 
 				"MZ, 0" 
 				];
 				while (passCount < passes) {
@@ -179,14 +179,14 @@ $('#submit').on('click', function (){
 					
 					"M3, " + (startX + (flipX * triangleXOffset)).toFixed(3) + ", " +  (centerY  + (triangleSideLength / 2)).toFixed(3) + "," + ((passCount + 1) * plunge).toFixed(3),
 					"MY, " + (centerY  - ( triangleSideLength / 2)).toFixed(3),
-					"M2, " + (startX + triangleXOffset).toFixed(3) + ", " +  centerY
+					"M2, " + (startX + triangleXOffset).toFixed(3) + ", " +  centerY.toFixed(3)
 					
 					);
 					passCount ++			
 					}
                 shopbotCode.push(            
-				"M3, " + (startX + (flipX * triangleXOffset)).toFixed(3) + ", " +  (centerY  + (triangleSideLength / 2)).toFixed(3) + "," + (0-cutDepth),
-				"MZ," + safeZ
+				"M3, " + (startX + (flipX * triangleXOffset)).toFixed(3) + ", " +  (centerY  + (triangleSideLength / 2)).toFixed(3) + "," + (0-cutDepth).toFixed(3),
+				"MZ, " + safeZ
 				);
 				
 			passCount = 0;
@@ -210,7 +210,7 @@ $('#submit').on('click', function (){
 					passCount ++			
 					}
 					shopbotCode.push(
-					"M3, " + (startX + (flipX * (0 - triangleXOffset))).toFixed(3) + ", " +  ((centerY + nextPair) + (triangleSideLength / 2)).toFixed(3) + "," + (0-cutDepth),	
+					"M3, " + (startX + (flipX * (0 - triangleXOffset))).toFixed(3) + ", " +  ((centerY + nextPair) + (triangleSideLength / 2)).toFixed(3) + "," + (0-cutDepth).toFixed(3),	
                     "MZ, " + safeZ,					
                     "J2, " + (startX + (flipX * triangleXOffset)) .toFixed(3)+ ", " +  (centerY  - nextPair).toFixed(3),
 					"MZ, 0"
@@ -227,7 +227,7 @@ $('#submit').on('click', function (){
 					passCount ++			
 					}
 					shopbotCode.push(
-					"M3, " + (startX + (flipX * (0 - triangleXOffset))).toFixed(3) + ", " +  ((centerY  - nextPair) + (triangleSideLength / 2)).toFixed(3) + "," + (0-cutDepth),
+					"M3, " + (startX + (flipX * (0 - triangleXOffset))).toFixed(3) + ", " +  ((centerY  - nextPair) + (triangleSideLength / 2)).toFixed(3) + "," + (0-cutDepth).toFixed(3),
                     "MZ, " + safeZ              
 					);
 					
@@ -243,7 +243,7 @@ $('#submit').on('click', function (){
 					"MZ, " + safeZ,
 					"CP, " + (holeDiameter - bitDiameter) + "," + startX  + "," + (startY  + holeSpacing).toFixed(3) + ",T,,,," + plunge + "," + passes + ",,,4,,1",
 					"MZ, " + safeZ,
-					"M2, " + (startX + ((beamWidth + bitDiameter)/2) )+ "," + startY,
+					"M2, " + (startX + ((beamWidth + bitDiameter)/2) ).toFixed(3) + "," + startY,
 					"MZ, 0"
 				)
 			
@@ -254,9 +254,9 @@ $('#submit').on('click', function (){
 			while (passCount < passes) {
 				shopbotCode.push (
 				
-					"M3, " + (startX + beamRadius + bitRadius) + "," + (startY + holeSpacing) + "," + (passCount + 1) * plunge, 
-					"CP, " + (beamWidth + bitDiameter) + "," + startX + "," + (startY + holeSpacing).toFixed(3) + ",T,-1,90,270,,,,,,1,",
-					"CP, " + (beamWidth + bitDiameter) + "," + startX + "," + startY + ",T,-1,270,90,,,,,,1,"
+					"M3, " + (startX + beamRadius + bitRadius).toFixed(3) + "," + (startY + holeSpacing).toFixed(3) + "," + (passCount + 1) * plunge, 
+					"CP, " + (beamWidth + bitDiameter).toFixed(3) + "," + startX.toFixed(3) + "," + (startY + holeSpacing).toFixed(3) + ",T,-1,90,270,,,,,,1,",
+					"CP, " + (beamWidth + bitDiameter).toFixed(3) + "," + startX.toFixed(3) + "," + startY.toFixed(3) + ",T,-1,270,90,,,,,,1,"
 				)
 				
             passCount ++			
@@ -264,7 +264,7 @@ $('#submit').on('click', function (){
 			
 			//close it all up
 				shopbotCode.push (		
-				"M3, " + (startX + beamRadius + bitRadius)+ "," + (startY + holeSpacing) + "," + 	(0 - cutDepth),		
+				"M3, " + (startX + beamRadius + bitRadius).toFixed(3) + "," + (startY + holeSpacing).toFixed(3) + "," + (0 - cutDepth).toFixed(3),		
 				"MZ," + safeZ,
 				"M2, 0,0"
 				 )
@@ -285,11 +285,11 @@ $('#submit').on('click', function (){
 			    // drill holes
 					
              shopbotCode.push(
-				"CP, " + (holeDiameter - bitDiameter) + "," + startX + "," + startY + ",T,,,," + plunge + "," + passes + ",,,4,,1",
+				"CP, " + (holeDiameter - bitDiameter).toFixed(3) + "," + startX + "," + startY + ",T,,,," + plunge + "," + passes + ",,,4,,1",
 				"MZ, " + safeZ,
-				"CP, " + (holeDiameter - bitDiameter) + "," + startX  + "," + (startY  + holeSpacing).toFixed(3) + ",T,,,," + plunge + "," + passes + ",,,4,,1",
+				"CP, " + (holeDiameter - bitDiameter).toFixed(3) + "," + startX  + "," + (startY  + holeSpacing).toFixed(3) + ",T,,,," + plunge + "," + passes + ",,,4,,1",
 				"MZ, " + safeZ,
-				"M2, " + (startX + ((beamWidth + bitDiameter)/2) )+ "," + startY,
+				"M2, " + (startX + ((beamWidth + bitDiameter)/2)).toFixed(3) + "," + startY,
 				"MZ, 0"
 			)
 			
@@ -300,16 +300,16 @@ $('#submit').on('click', function (){
 			while (passCount < passes) {
 				shopbotCode.push (
 				
-				"M3, " + (startX + beamRadius + bitRadius) + "," + (startY + holeSpacing) + "," + (passCount + 1) * plunge, 
-				"CP, " + (beamWidth + bitDiameter) + "," + startX + "," + (startY + holeSpacing).toFixed(3) + ",T,-1,90,270,,,,,,1,",
-				"CP, " + (beamWidth + bitDiameter) + "," + startX + "," + startY + ",T,-1,270,90,,,,,,1,"
+				"M3, " + (startX + beamRadius + bitRadius).toFixed(3) + "," + (startY + holeSpacing).toFixed(3) + "," + ((passCount + 1) * plunge).toFixed(3), 
+				"CP, " + (beamWidth + bitDiameter).toFixed(3) + "," + startX + "," + (startY + holeSpacing).toFixed(3) + ",T,-1,90,270,,,,,,1,",
+				"CP, " + (beamWidth + bitDiameter).toFixed(3) + "," + startX + "," + startY + ",T,-1,270,90,,,,,,1,"
 				
 				)
 				passCount ++			
 				}
 				//close it up
 				shopbotCode.push (		
-				"M3, " + (startX + beamRadius + bitRadius) + ", " + (startY + holeSpacing) + ", " + 	(0 - cutDepth),		
+				"M3, " + (startX + beamRadius + bitRadius).toFixed(3) + ", " + (startY + holeSpacing).toFixed(3) + ", " + 	(0 - cutDepth).toFixed(3),		
 				"MZ," + safeZ,
 				"M2, 0,0"
 			 )
