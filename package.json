@@ -1,10 +1,16 @@
 {
   "name": "Beamer",
+  "repository" : "https://github.com/FabMo/fabmo-beamer-app.git",
+  "license" : "MIT",
   "main": "./index.html",
   "icon": "icon.png",
-  "icon_color": "black",
-  "version": "0.0.1",
+  "icon_color": "#4F2E27",
+  "version": "1.0.1",
   "author": "Bill Young",
   "website": "http://www.shopbottools.com",
-  "description": "Cut a beam"
+  "description": "Cut beams of varying dimensions.",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-zip": "^0.17.1"
+}
 }
