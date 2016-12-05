@@ -21,15 +21,15 @@ $( document ).ready(function() {
     fabmo.getAppConfig(function(err, data) {
         appConfig = data;
         for(key in appConfig) {
-            console.info('Key "' + key + '" found in the app config with a value of ' + data[key]);
+            //console.info('Key "' + key + '" found in the app config with a value of ' + data[key]);
             $('#' + key).val(appConfig[key])
         }
 
         // For Bill:
         appConfig.timesAppWasLoaded = appConfig.timesAppWasLoaded ||  0;
         appConfig.timesAppWasLoaded++;
-        console.log("loaded")
-        fabmo.notify('info', 'App has been loaded ' + appConfig.timesAppWasLoaded + ' times.');
+        //console.log("loaded")
+        //fabmo.notify('info', 'App has been loaded ' + appConfig.timesAppWasLoaded + ' times.');
         fabmo.setAppConfig(appConfig);
     });
 }); // document.ready
@@ -48,7 +48,7 @@ $('form').parsley().on('field:success', function() {
     appConfig[id] = el.val();
 
     // Send the config back to the tool
-    console.info("Sending app config: " + JSON.stringify(appConfig));
+    //console.info("Sending app config: " + JSON.stringify(appConfig));
     fabmo.setAppConfig(appConfig);
 });
 
