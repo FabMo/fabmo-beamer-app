@@ -118,214 +118,212 @@ $('.unlock').on('click', function (evt) {
     $('.lockable').attr("disabled", "true");
 });
 
-$('#submit').on('click', function (){
-    $('.basic-setting').parsley().on('form:submit', function() {
+$('#submit').on('click', function (evt){
+  evt.preventDefault();
+  $('.basic-setting').parsley().validate();
+});
+
+$('.basic-setting').parsley().on('form:success', function() {
+    
+    // start creating file 
+    if ($('#check-triangle').prop('checked')) {
+      hasTriangles = true;
+    } else {
+      hasTriangles = false; 
+    }
+     //values from form
+    var holeDiameter = parseFloat($('#hole-diameter').val());
+    var beamWidth = parseFloat($('#beam-width').val());
+    var holeSpacing = parseFloat($('#hole-spacing').val());
+    var speed = parseFloat($('#feed-rate').val());
+    var bitDiameter = parseFloat($('#bit-diameter').val());
+    var thickness = Math.abs(parseFloat($('#thickness').val()));
+    var thruCut = Math.abs(parseFloat($('#thru-cut').val()));
+    var cutDepth = (thickness + thruCut);   
+	
+	var maxPlunge = bitDiameter * .75;
+	var passes = Math.ceil(cutDepth/maxPlunge);
+	var plunge = (0-(cutDepth/passes)).toFixed(5);
+	
+    var safeZ = parseFloat($('#safe-Z').val());
+
+    //calculated values
+    var beamRadius = beamWidth / 2;
+    var bitRadius = bitDiameter / 2;		
+    var startY = beamRadius;
+    var startX = beamRadius;
+	var passCount = 0;
+
+    if (hasTriangles){
+        // triangle vals
+        var flipX = -1; // used to flip the X-axis orientation of pairs of triangle cutouts
+        var moveY = 0;  // a counter to offset pairs of cutouts in Y
+        var centerY = ((holeSpacing / 2) + startY); // Find the center of the beam to place the first triangle
+        var triangleSideLength = ((beamWidth * 0.6)  - bitRadius);   //size triangle to beam width   
+        var triangleXOffset = ((triangleSideLength * Math.cos(.5235988))  / 2);
+        var triangleYOffset = (triangleSideLength + bitDiameter);
         
-        // start creating file 
-        if ($('#check-triangle').prop('checked')) {
-          hasTriangles = true;
-        } else {
-          hasTriangles = false; 
-        }
-         //values from form
-        var holeDiameter = parseFloat($('#hole-diameter').val());
-        var beamWidth = parseFloat($('#beam-width').val());
-        var holeSpacing = parseFloat($('#hole-spacing').val());
-        var speed = parseFloat($('#feed-rate').val());
-        var bitDiameter = parseFloat($('#bit-diameter').val());
-        var thickness = Math.abs(parseFloat($('#thickness').val()));
-        var thruCut = Math.abs(parseFloat($('#thru-cut').val()));
-        var cutDepth = (thickness + thruCut);   
-		
-		var maxPlunge = bitDiameter * .75;
-		var passes = Math.ceil(cutDepth/maxPlunge);
-		var plunge = (0-(cutDepth/passes)).toFixed(5);
-
-		
-		
-        var safeZ = parseFloat($('#safe-Z').val());
-
-        //calculated values
-        var beamRadius = beamWidth / 2;
-        var bitRadius = bitDiameter / 2;		
-        var startY = beamRadius;
-        var startX = beamRadius;
-		var passCount = 0;
-
-        if (hasTriangles){
-            // triangle vals
-            var flipX = -1; // used to flip the X-axis orientation of pairs of triangle cutouts
-            var moveY = 0;  // a counter to offset pairs of cutouts in Y
-            var centerY = ((holeSpacing / 2) + startY); // Find the center of the beam to place the first triangle
-            var triangleSideLength = ((beamWidth * 0.6)  - bitRadius);   //size triangle to beam width   
-            var triangleXOffset = ((triangleSideLength * Math.cos(.5235988))  / 2);
-            var triangleYOffset = (triangleSideLength + bitDiameter);
-            
-            // cut first triangle in center of beam
-            var shopbotCode = [         
-                "'Bit Diameter: " + bitDiameter ,
-                //"VC, " + bitDiameter,
-                "'Safe Z",
-                "MZ, " + safeZ,
-                "'Spindle On",
-                "SO, 1,1",
-                "MS," + speed,
-                "pause 3",          
-                "J2, " + (startX + triangleXOffset).toFixed(3) + "," + centerY.toFixed(3), 
-				"MZ, 0" 
-				];
-				while (passCount < passes) {
-					shopbotCode.push (
-					
-					"M3, " + (startX + (flipX * triangleXOffset)).toFixed(3) + ", " +  (centerY  + (triangleSideLength / 2)).toFixed(3) + "," + ((passCount + 1) * plunge).toFixed(3),
-					"MY, " + (centerY  - ( triangleSideLength / 2)).toFixed(3),
-					"M2, " + (startX + triangleXOffset).toFixed(3) + ", " +  centerY.toFixed(3)
-					
-					);
-					passCount ++			
-					}
-                shopbotCode.push(            
-				"M3, " + (startX + (flipX * triangleXOffset)).toFixed(3) + ", " +  (centerY  + (triangleSideLength / 2)).toFixed(3) + "," + (0-cutDepth).toFixed(3),
-				"MZ, " + safeZ
+        // cut first triangle in center of beam
+        var shopbotCode = [         
+            "'Bit Diameter: " + bitDiameter ,
+            //"VC, " + bitDiameter,
+            "'Safe Z",
+            "MZ, " + safeZ,
+            "'Spindle On",
+            "SO, 1,1",
+            "MS," + speed,
+            "pause 3",          
+            "J2, " + (startX + triangleXOffset).toFixed(3) + "," + centerY.toFixed(3), 
+			"MZ, 0" 
+			];
+			while (passCount < passes) {
+				shopbotCode.push (
+				
+				"M3, " + (startX + (flipX * triangleXOffset)).toFixed(3) + ", " +  (centerY  + (triangleSideLength / 2)).toFixed(3) + "," + ((passCount + 1) * plunge).toFixed(3),
+				"MY, " + (centerY  - ( triangleSideLength / 2)).toFixed(3),
+				"M2, " + (startX + triangleXOffset).toFixed(3) + ", " +  centerY.toFixed(3)
+				
 				);
-				
-			passCount = 0;
-			
-            // continue cutting pairs of triangles
-            var nextPair = (moveY + triangleYOffset);
-            var lastPair = ((holeSpacing / 2) -  triangleYOffset);
-            while ( nextPair < lastPair) {  
-                shopbotCode.push(	                    
-                    "J2, " + (startX + (flipX * triangleXOffset)).toFixed(3) + ", " +  (centerY + nextPair).toFixed(3),	
-					"MZ, 0"
-					);
-					
-				while (passCount < passes) {			
-					shopbotCode.push(
-                    
-                    "M3, " + (startX + (flipX * (0 - triangleXOffset))).toFixed(3) + ", " +  ((centerY + nextPair) + (triangleSideLength / 2)).toFixed(3) + "," + ((passCount + 1) * plunge).toFixed(3),          
-                    "MY, " + ((centerY + nextPair) - ( triangleSideLength / 2)).toFixed(3),             
-                    "M2, " + (startX + (flipX * triangleXOffset)).toFixed(3) + ", " +  (centerY  + nextPair).toFixed(3)
-					);
-					passCount ++			
-					}
-					shopbotCode.push(
-					"M3, " + (startX + (flipX * (0 - triangleXOffset))).toFixed(3) + ", " +  ((centerY + nextPair) + (triangleSideLength / 2)).toFixed(3) + "," + (0-cutDepth).toFixed(3),	
-                    "MZ, " + safeZ,					
-                    "J2, " + (startX + (flipX * triangleXOffset)) .toFixed(3)+ ", " +  (centerY  - nextPair).toFixed(3),
-					"MZ, 0"
-					);
-					passCount = 0;
-					//stopped here
-					while (passCount < passes) {			
-					shopbotCode.push(
-
-                    "M3, " + (startX + (flipX * (0 - triangleXOffset))).toFixed(3) + ", " +  ((centerY  - nextPair) + (triangleSideLength / 2)).toFixed(3) + "," + ((passCount + 1) * plunge).toFixed(3),
-                    "MY, " + ((centerY - nextPair) - ( triangleSideLength / 2)).toFixed(3),
-                    "M2, " + (startX + (flipX * triangleXOffset)).toFixed(3) + ", " +  (centerY  - nextPair).toFixed(3)
-					);
-					passCount ++			
-					}
-					shopbotCode.push(
-					"M3, " + (startX + (flipX * (0 - triangleXOffset))).toFixed(3) + ", " +  ((centerY  - nextPair) + (triangleSideLength / 2)).toFixed(3) + "," + (0-cutDepth).toFixed(3),
-                    "MZ, " + safeZ              
-					);
-					
-                 flipX = flipX * -1; 
-                nextPair = nextPair + triangleYOffset; 
-				passCount = 0;
-            }           
-
-            // drill holes 
-				
-				 shopbotCode.push(
-					"CP, " + (holeDiameter - bitDiameter) + "," + startX + "," + startY + ",T,,,," + plunge + "," + passes + ",,,4,,1",
-					"MZ, " + safeZ,
-					"CP, " + (holeDiameter - bitDiameter) + "," + startX  + "," + (startY  + holeSpacing).toFixed(3) + ",T,,,," + plunge + "," + passes + ",,,4,,1",
-					"MZ, " + safeZ,
-					"M2, " + (startX + ((beamWidth + bitDiameter)/2) ).toFixed(3) + "," + startY,
-					"MZ, 0"
-				)
-			
-			//then cut out
-			
-			var passCount = 0
-			
-			while (passCount < passes) {
-				shopbotCode.push (
-				
-					"M3, " + (startX + beamRadius + bitRadius).toFixed(3) + "," + (startY + holeSpacing).toFixed(3) + "," + (passCount + 1) * plunge, 
-					"CP, " + (beamWidth + bitDiameter).toFixed(3) + "," + startX.toFixed(3) + "," + (startY + holeSpacing).toFixed(3) + ",T,-1,90,270,,,,,,1,",
-					"CP, " + (beamWidth + bitDiameter).toFixed(3) + "," + startX.toFixed(3) + "," + startY.toFixed(3) + ",T,-1,270,90,,,,,,1,"
-				)
-				
-            passCount ++			
-			}
-			
-			//close it all up
-				shopbotCode.push (		
-				"M3, " + (startX + beamRadius + bitRadius).toFixed(3) + "," + (startY + holeSpacing).toFixed(3) + "," + (0 - cutDepth).toFixed(3),		
-				"MZ," + safeZ,
-				"M2, 0,0"
-				 )
-			
-        } else {
-            // no triangles
-            var shopbotCode = [ 
-                "'Bit Diameter: " + bitDiameter,
-                //"VC, " + bitDiameter,
-                "'Safe Z",
-                "MZ," + safeZ,
-                "'Spindle On",
-                "SO,1,1",
-                "MS," + speed,
-                "PAUSE 3",
-                 
-            ];
-			    // drill holes
-					
-             shopbotCode.push(
-				"CP, " + (holeDiameter - bitDiameter).toFixed(3) + "," + startX + "," + startY + ",T,,,," + plunge + "," + passes + ",,,4,,1",
-				"MZ, " + safeZ,
-				"CP, " + (holeDiameter - bitDiameter).toFixed(3) + "," + startX  + "," + (startY  + holeSpacing).toFixed(3) + ",T,,,," + plunge + "," + passes + ",,,4,,1",
-				"MZ, " + safeZ,
-				"M2, " + (startX + ((beamWidth + bitDiameter)/2)).toFixed(3) + "," + startY,
-				"MZ, 0"
-			)
-			
-			//and finally cut out
-			
-			
-			
-			while (passCount < passes) {
-				shopbotCode.push (
-				
-				"M3, " + (startX + beamRadius + bitRadius).toFixed(3) + "," + (startY + holeSpacing).toFixed(3) + "," + ((passCount + 1) * plunge).toFixed(3), 
-				"CP, " + (beamWidth + bitDiameter).toFixed(3) + "," + startX + "," + (startY + holeSpacing).toFixed(3) + ",T,-1,90,270,,,,,,1,",
-				"CP, " + (beamWidth + bitDiameter).toFixed(3) + "," + startX + "," + startY + ",T,-1,270,90,,,,,,1,"
-				
-				)
 				passCount ++			
 				}
-				//close it up
-				shopbotCode.push (		
-				"M3, " + (startX + beamRadius + bitRadius).toFixed(3) + ", " + (startY + holeSpacing).toFixed(3) + ", " + 	(0 - cutDepth).toFixed(3),		
-				"MZ," + safeZ,
-				"M2, 0,0"
+            shopbotCode.push(            
+			"M3, " + (startX + (flipX * triangleXOffset)).toFixed(3) + ", " +  (centerY  + (triangleSideLength / 2)).toFixed(3) + "," + (0-cutDepth).toFixed(3),
+			"MZ, " + safeZ
+			);
+			
+		passCount = 0;
+		
+        // continue cutting pairs of triangles
+        var nextPair = (moveY + triangleYOffset);
+        var lastPair = ((holeSpacing / 2) -  triangleYOffset);
+        while ( nextPair < lastPair) {  
+            shopbotCode.push(	                    
+                "J2, " + (startX + (flipX * triangleXOffset)).toFixed(3) + ", " +  (centerY + nextPair).toFixed(3),	
+				"MZ, 0"
+				);
+				
+			while (passCount < passes) {			
+				shopbotCode.push(
+                
+                "M3, " + (startX + (flipX * (0 - triangleXOffset))).toFixed(3) + ", " +  ((centerY + nextPair) + (triangleSideLength / 2)).toFixed(3) + "," + ((passCount + 1) * plunge).toFixed(3),          
+                "MY, " + ((centerY + nextPair) - ( triangleSideLength / 2)).toFixed(3),             
+                "M2, " + (startX + (flipX * triangleXOffset)).toFixed(3) + ", " +  (centerY  + nextPair).toFixed(3)
+				);
+				passCount ++			
+				}
+				shopbotCode.push(
+				"M3, " + (startX + (flipX * (0 - triangleXOffset))).toFixed(3) + ", " +  ((centerY + nextPair) + (triangleSideLength / 2)).toFixed(3) + "," + (0-cutDepth).toFixed(3),	
+                "MZ, " + safeZ,					
+                "J2, " + (startX + (flipX * triangleXOffset)) .toFixed(3)+ ", " +  (centerY  - nextPair).toFixed(3),
+				"MZ, 0"
+				);
+				passCount = 0;
+				//stopped here
+				while (passCount < passes) {			
+				shopbotCode.push(
+
+                "M3, " + (startX + (flipX * (0 - triangleXOffset))).toFixed(3) + ", " +  ((centerY  - nextPair) + (triangleSideLength / 2)).toFixed(3) + "," + ((passCount + 1) * plunge).toFixed(3),
+                "MY, " + ((centerY - nextPair) - ( triangleSideLength / 2)).toFixed(3),
+                "M2, " + (startX + (flipX * triangleXOffset)).toFixed(3) + ", " +  (centerY  - nextPair).toFixed(3)
+				);
+				passCount ++			
+				}
+				shopbotCode.push(
+				"M3, " + (startX + (flipX * (0 - triangleXOffset))).toFixed(3) + ", " +  ((centerY  - nextPair) + (triangleSideLength / 2)).toFixed(3) + "," + (0-cutDepth).toFixed(3),
+                "MZ, " + safeZ              
+				);
+				
+             flipX = flipX * -1; 
+            nextPair = nextPair + triangleYOffset; 
+			passCount = 0;
+        }           
+
+        // drill holes 
+			
+			 shopbotCode.push(
+				"CP, " + (holeDiameter - bitDiameter) + "," + startX + "," + startY + ",T,,,," + plunge + "," + passes + ",,,4,,1",
+				"MZ, " + safeZ,
+				"CP, " + (holeDiameter - bitDiameter) + "," + startX  + "," + (startY  + holeSpacing).toFixed(3) + ",T,,,," + plunge + "," + passes + ",,,4,,1",
+				"MZ, " + safeZ,
+				"M2, " + (startX + ((beamWidth + bitDiameter)/2) ).toFixed(3) + "," + startY,
+				"MZ, 0"
+			)
+		
+		//then cut out
+		
+		var passCount = 0
+		
+		while (passCount < passes) {
+			shopbotCode.push (
+			
+				"M3, " + (startX + beamRadius + bitRadius).toFixed(3) + "," + (startY + holeSpacing).toFixed(3) + "," + (passCount + 1) * plunge, 
+				"CP, " + (beamWidth + bitDiameter).toFixed(3) + "," + startX.toFixed(3) + "," + (startY + holeSpacing).toFixed(3) + ",T,-1,90,270,,,,,,1,",
+				"CP, " + (beamWidth + bitDiameter).toFixed(3) + "," + startX.toFixed(3) + "," + startY.toFixed(3) + ",T,-1,270,90,,,,,,1,"
+			)
+			
+        passCount ++			
+		}
+		
+		//close it all up
+			shopbotCode.push (		
+			"M3, " + (startX + beamRadius + bitRadius).toFixed(3) + "," + (startY + holeSpacing).toFixed(3) + "," + (0 - cutDepth).toFixed(3),		
+			"MZ," + safeZ,
+			"M2, 0,0"
 			 )
-        } 
 		
-
-
+    } else {
+        // no triangles
+        var shopbotCode = [ 
+            "'Bit Diameter: " + bitDiameter,
+            //"VC, " + bitDiameter,
+            "'Safe Z",
+            "MZ," + safeZ,
+            "'Spindle On",
+            "SO,1,1",
+            "MS," + speed,
+            "PAUSE 3",
+             
+        ];
+		    // drill holes
+				
+         shopbotCode.push(
+			"CP, " + (holeDiameter - bitDiameter).toFixed(3) + "," + startX + "," + startY + ",T,,,," + plunge + "," + passes + ",,,4,,1",
+			"MZ, " + safeZ,
+			"CP, " + (holeDiameter - bitDiameter).toFixed(3) + "," + startX  + "," + (startY  + holeSpacing).toFixed(3) + ",T,,,," + plunge + "," + passes + ",,,4,,1",
+			"MZ, " + safeZ,
+			"M2, " + (startX + ((beamWidth + bitDiameter)/2)).toFixed(3) + "," + startY,
+			"MZ, 0"
+		)
 		
-		//ready to go 
-        var beamerCode = shopbotCode.join('\n');
+		//and finally cut out
+		
+		
+		
+		while (passCount < passes) {
+			shopbotCode.push (
+			
+			"M3, " + (startX + beamRadius + bitRadius).toFixed(3) + "," + (startY + holeSpacing).toFixed(3) + "," + ((passCount + 1) * plunge).toFixed(3), 
+			"CP, " + (beamWidth + bitDiameter).toFixed(3) + "," + startX + "," + (startY + holeSpacing).toFixed(3) + ",T,-1,90,270,,,,,,1,",
+			"CP, " + (beamWidth + bitDiameter).toFixed(3) + "," + startX + "," + startY + ",T,-1,270,90,,,,,,1,"
+			
+			)
+			passCount ++			
+			}
+			//close it up
+			shopbotCode.push (		
+			"M3, " + (startX + beamRadius + bitRadius).toFixed(3) + ", " + (startY + holeSpacing).toFixed(3) + ", " + 	(0 - cutDepth).toFixed(3),		
+			"MZ," + safeZ,
+			"M2, 0,0"
+		 )
+    } 
+		
+	//ready to go 
+    var beamerCode = shopbotCode.join('\n');
 
-        fabmo.submitJob({
-            file: beamerCode,
-            filename : 'beamer-' + holeSpacing.toFixed(3) + 'x' + beamWidth.toFixed(3) + '.sbp',
-            name : 'Beamer',
-            description : 'Cut a beam with ' + holeDiameter + '" diameter holes that are ' + holeSpacing + '" apart' 
-        });
-    }); // $('.basic-setting').parsley().on('form:submit');
-}); // $('#submit').on('click');
+    fabmo.submitJob({
+        file: beamerCode,
+        filename : 'beamer-' + holeSpacing.toFixed(3) + 'x' + beamWidth.toFixed(3) + '.sbp',
+        name : 'Beamer',
+        description : 'Cut a beam with ' + holeDiameter + '" diameter holes that are ' + holeSpacing + '" apart' 
+    });
+}); // $('.basic-setting').parsley().on('form:submit');
